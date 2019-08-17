@@ -1,7 +1,7 @@
 FROM debian:stretch-slim AS build
 
+ENV PHP_VERSION="7.1.31"
 
-ENV PHP_VERSION="7.2.21"
 ENV PHP_URL="https://www.php.net/get/php-${PHP_VERSION}.tar.xz/from/this/mirror"
 ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2"
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
@@ -123,8 +123,6 @@ RUN set -eux; \
                 --enable-ftp \
                 --enable-mbstring \
                 --enable-mysqlnd \
-                --with-password-argon2 \
-                --with-sodium=shared \
                 --with-curl \
                 --with-libedit \
                 --with-openssl \
@@ -294,12 +292,12 @@ RUN apt-get update \
    && useradd -M www -s /usr/sbin/nologin \
 #    && mkdir -p /var/web/www \
 #    && chown www:www /var/web/www \
-   && chmod +x /usr/local/bin/docker-entrypoint.sh 
+   && chmod +x /usr/local/bin/docker-php-entrypoint 
 #    && ln -sf /dev/stdout /usr/local/openresty/nginx/logs/access.log \
 #    && ln -sf /dev/stderr /usr/local/openresty${RESTY_DEB_FLAVOR}/nginx/logs/error.log
    
 # ENV PATH="$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin"
-ENV PARAMS ""
+# ENV PARAMS ""
 WORKDIR /srv
 
 ENTRYPOINT ["docker-php-entrypoint"]
