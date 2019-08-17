@@ -1,0 +1,31 @@
+language: bash
+services: docker
+
+env:
+  - VERSION=7.2.19 VARIANT=fpm
+  - VERSION=7.2 VARIANT=fpm
+  - VERSION=7.1.30 VARIANT=fpm
+
+install:
+  - echo "skip"
+
+before_script:
+  - env | sort
+  - cd "${VERSION}/${VARIANT}"
+  - slash='/'; image="${DOCKER_REPO}:${VERSION}-${VARIANT//$slash/-}"
+
+script:
+  - |
+    (
+      set -Eeuo pipefail
+      set -x
+      docker build -t "$image" .
+    )
+after_script:
+  - docker images
+
+deploy:
+- provider: script
+  script: >- 
+   docker login --username ${DOCKER_USER} --password ${DOCKER_PASSWORD}
+   && docker push $image
